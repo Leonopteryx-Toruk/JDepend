@@ -1,0 +1,2 @@
+# JDepend
+automatize JDepend
