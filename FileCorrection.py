@@ -14,7 +14,7 @@ class FileCorrection():
         toBeWritten = ""
         with open(path, mode="r") as joutput:
             for line in joutput:
-                if line.startswith("Name, Class Count, Abstract Class Count, Ca, Ce, A, I, D, V:"):
+                if line.startswith("Name; Class Count; Abstract Class Count; Ca; Ce; A; I; D; V"):
                     found = True
                 if found:
                     toBeWritten += line
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser.add_argument("-i", "--input", help="the path of the versions of the project")
     parser.add_argument("-o", "--output", help="the path of the output of jdepend")
     parser.add_argument("-cp", "--classpath", help="the path of the classpath of jdepend",
-                        default="C:\Program Files (x86)\jdepend-2.9.1\lib\jdepend-2.9.1.jar")
+                        default="jdepend-2.9.1.jar")
     args = parser.parse_args()
     if not args.input and not args.output:
         print "insert input or output"
