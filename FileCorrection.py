@@ -27,20 +27,94 @@ class FileCorrection():
             pathFile = folderPath + "\\" + file
             self.correctFile(pathFile)
 
+    def modifyFileName(self, fileName, numbers):
+        fileNameModified = ""
+        i = 0
+        j = 0
+        while i < len(fileName):
+            digit = ""
+            if str.isdigit(fileName[i]):
+                j = j + 1
+                while i < len(fileName) and str.isdigit(fileName[i]):
+                    digit = digit + fileName[i]
+                    i = i + 1
+                k = 0
+                lengthDigit = len(digit)
+                while k < (numbers[j - 1] - lengthDigit):
+                    digit = "0" + digit
+                    k = k + 1
+                fileNameModified += digit
+                if i >= len(fileName) and j < len(numbers):
+                    k = 0
+                    while k < len(numbers) - j:
+                        fileNameModified += ".0"
+                        k1 = 1
+                        while k1 < numbers[k + j]:
+                            fileNameModified += "0"
+                            k1 += 1
+                        k = k + 1
+            else:
+                fileNameModified += fileName[i]
+                i = i + 1
+        return fileNameModified
+
+    def test(self):
+        onlydirs = ["jruby-1.7.6", "jruby-1.7", "jruby-1.21.2"]
+        numbers = []
+        for dir in onlydirs:
+            i = 0
+            j = 0
+            while i < len(dir):
+                if(str.isdigit(dir[i])):
+                    j = j + 1
+                    if j > len(numbers):
+                        numbers.append(0)
+                    digitLength = 0
+                    while i < len(dir) and  str.isdigit(dir[i]):
+                        digitLength += 1
+                        i = i + 1
+                    if numbers[j - 1] < digitLength:
+                        numbers[j - 1] = digitLength
+                else:
+                    i = i + 1
+        print numbers
+        for dir in onlydirs:
+            print self.modifyFileName(dir, numbers)
+
     def setClassPath(self, pathVersions, pathOutput, classpath):
         subprocess.call(["echo", "Hello word"], shell=True)
         #subprocess.call(["set", "CLASSPATH=%CLASSPATH%;C:\Program Files (x86)\jdepend-2.9.1\lib\jdepend-2.9.1.jar"], shell=True)
         #os.system("set CLASSPATH=%CLASSPATH%;C:\Program Files (x86)\jdepend-2.9.1\lib\jdepend-2.9.1.jar")
         classpath = "\"" + classpath + "\""
         onlydirs = [f for f in listdir(pathVersions) if isdir(join(pathVersions, f))]
+        numbers = []
+        for dir in onlydirs:
+            i = 0
+            j = 0
+            while i < len(dir):
+                if(str.isdigit(dir[i])):
+                    j = j + 1
+                    if j > len(numbers):
+                        numbers.append(0)
+                    digitLength = 0
+                    while i < len(dir) and  str.isdigit(dir[i]):
+                        digitLength += 1
+                        i = i + 1
+                    if numbers[j - 1] < digitLength:
+                        numbers[j - 1] = digitLength
+                else:
+                    i = i + 1
         for file in onlydirs:
             pathFile = "\""+pathVersions + "\\" + file+"\""
-            pathV = "\""+pathOutput + "\\" + file + ".txt"+"\""
+            pathV = "\""+pathOutput + "\\" + self.modifyFileName(file, numbers) + ".txt"+"\""
             print pathV
             print pathFile
             os.system("java -cp " + classpath + " jdepend.textui.JDepend -file " + pathV + " " + pathFile)
 
 if __name__ == '__main__':
+    #fc = FileCorrection()
+    #fc.test()
+    #exit()
     print "starting..."
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", help="the path of the versions of the project")
