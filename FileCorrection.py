@@ -27,7 +27,7 @@ class FileCorrection():
             pathFile = folderPath + "\\" + file
             self.correctFile(pathFile)
 
-    def modifyFileName(self, fileName, numbers):
+    def modifyFileName(self, fileName, numbers, h):
         fileNameModified = ""
         i = 0
         j = 0
@@ -47,7 +47,9 @@ class FileCorrection():
                 if i >= len(fileName) and j < len(numbers):
                     k = 0
                     while k < len(numbers) - j:
-                        fileNameModified += ".0"
+                        bestSeparator = sorted(h.items(), key=lambda(k,v):(v,k), reverse=True)
+                        #print bestSeparator[0][0]
+                        fileNameModified += bestSeparator[0][0] + "0"
                         k1 = 1
                         while k1 < numbers[k + j]:
                             fileNameModified += "0"
@@ -59,8 +61,9 @@ class FileCorrection():
         return fileNameModified
 
     def test(self):
-        onlydirs = ["jruby-1.7.6", "jruby-1.7", "jruby-1.21.2"]
+        onlydirs = ["log4j-1_7_2", "log4j-3_30", "log4j-1_1_1"]
         numbers = []
+        h = dict()
         for dir in onlydirs:
             i = 0
             j = 0
@@ -70,16 +73,22 @@ class FileCorrection():
                     if j > len(numbers):
                         numbers.append(0)
                     digitLength = 0
+                    separator = ""
                     while i < len(dir) and  str.isdigit(dir[i]):
                         digitLength += 1
                         i = i + 1
+                    if i < len(dir) and not str.isalpha(dir[i]):
+                        if dir[i] in h:
+                            h[dir[i]] = h[dir[i]] + 1
+                        else:
+                            h[dir[i]] = 1
                     if numbers[j - 1] < digitLength:
                         numbers[j - 1] = digitLength
                 else:
                     i = i + 1
         print numbers
         for dir in onlydirs:
-            print self.modifyFileName(dir, numbers)
+            print self.modifyFileName(dir, numbers, h)
 
     def setClassPath(self, pathVersions, pathOutput, classpath):
         subprocess.call(["echo", "Hello word"], shell=True)
@@ -88,6 +97,7 @@ class FileCorrection():
         classpath = "\"" + classpath + "\""
         onlydirs = [f for f in listdir(pathVersions) if isdir(join(pathVersions, f))]
         numbers = []
+        h = dict()
         for dir in onlydirs:
             i = 0
             j = 0
@@ -97,16 +107,22 @@ class FileCorrection():
                     if j > len(numbers):
                         numbers.append(0)
                     digitLength = 0
+                    separator = ""
                     while i < len(dir) and  str.isdigit(dir[i]):
                         digitLength += 1
                         i = i + 1
+                    if i < len(dir) and not str.isalpha(dir[i]):
+                        if dir[i] in h:
+                            h[dir[i]] = h[dir[i]] + 1
+                        else:
+                            h[dir[i]] = 1
                     if numbers[j - 1] < digitLength:
                         numbers[j - 1] = digitLength
                 else:
                     i = i + 1
         for file in onlydirs:
             pathFile = "\""+pathVersions + "\\" + file+"\""
-            pathV = "\""+pathOutput + "\\" + self.modifyFileName(file, numbers) + ".txt"+"\""
+            pathV = "\""+pathOutput + "\\" + self.modifyFileName(file, numbers, h) + ".txt"+"\""
             print pathV
             print pathFile
             os.system("java -cp " + classpath + " jdepend.textui.JDepend -file " + pathV + " " + pathFile)
