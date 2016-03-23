@@ -4,7 +4,7 @@ import subprocess
 from os import listdir
 from os.path import isfile, join, isdir
 
-class FileCorrection():
+class JDependFromDir():
 
     def __init__(self):
         pass
@@ -61,7 +61,7 @@ class FileCorrection():
         return fileNameModified
 
     def test(self):
-        onlydirs = ["log4j-1_7_2", "log4j-3_30", "log4j-1_1_1"]
+        onlydirs = ["log4j-1_7", "log4j-3", "log4j-1"]
         numbers = []
         h = dict()
         for dir in onlydirs:
@@ -77,7 +77,7 @@ class FileCorrection():
                     while i < len(dir) and  str.isdigit(dir[i]):
                         digitLength += 1
                         i = i + 1
-                    if i < len(dir) and not str.isalpha(dir[i]):
+                    if i < len(dir) and str.isdigit(dir[i+1]) and not str.isalpha(dir[i]):
                         if dir[i] in h:
                             h[dir[i]] = h[dir[i]] + 1
                         else:
@@ -128,7 +128,7 @@ class FileCorrection():
             os.system("java -cp " + classpath + " jdepend.textui.JDepend -file " + pathV + " " + pathFile)
 
 if __name__ == '__main__':
-    #fc = FileCorrection()
+    #fc = JDependFromDir()
     #fc.test()
     #exit()
     print "starting..."
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     #if args.input and args.output and not args.classpath:
     #    print "insert classpath"
     #    exit()
-    f = FileCorrection()
+    f = JDependFromDir()
     print args.classpath
     if args.input:
         f.setClassPath(args.input, args.output, args.classpath)
