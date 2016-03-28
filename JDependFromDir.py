@@ -61,7 +61,7 @@ class JDependFromDir():
         return fileNameModified
 
     def test(self):
-        onlydirs = ["log4j-1_7", "log4j-3", "log4j-1"]
+        onlydirs = ["primafaces-2_0_0", "primefaces-2_0_1", "primefaces-2_0_2"]
         numbers = []
         h = dict()
         for dir in onlydirs:
